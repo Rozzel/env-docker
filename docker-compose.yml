@@ -44,8 +44,6 @@ services:
           - memcached
   redis:
     image: redis:7.2.10-alpine
-    #image: redis:7.4.5-alpine
-    #image: redis:8.0.3-alpine
     container_name: dev_redis
     restart: unless-stopped
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -75,15 +73,11 @@ services:
         aliases:
           - redis
   postgres:
-    #image: postgres:14.18-bookworm
-    #image: postgres:15.13-bookworm
-    image: postgres:16.9-bookworm
-    #image: postgres:17.5-bookworm
+    image: postgres:17.5-bookworm
     container_name: dev_postgres
     restart: unless-stopped
     env_file:
       - .env
-      - .env_sql
 #    ports:
 #      - "5432:5432"
     volumes:
@@ -110,12 +104,10 @@ services:
           - postgres
   mysql:
     image: quay.io/bitrix24/percona-server:8.0.42-v1-rhel
-    #image: quay.io/bitrix24/percona-server:8.4.5-v1-rhel
     container_name: dev_mysql
     restart: unless-stopped
     env_file:
       - .env
-      - .env_sql
 #    ports:
 #      - "3306:3306"
 #      - "33060:33060"
@@ -139,20 +131,15 @@ services:
         aliases:
           - mysql
   php:
-    image: quay.io/bitrix24/php:8.2.29-fpm-v1-alpine
-    #image: quay.io/bitrix24/php:8.3.24-fpm-v1-alpine
-    #image: quay.io/bitrix24/php:8.4.11-fpm-v1-alpine
+    image: quay.io/bitrix24/php:8.4.11-fpm-v1-alpine
     container_name: dev_php
     restart: unless-stopped
     env_file:
       - .env
-      - .env_php
 #    ports:
 #      - "9000:9000"
     volumes:
       - ./confs/php82/etc/:/usr/local/etc/
-      #- ./confs/php83/etc/:/usr/local/etc/
-      #- ./confs/php84/etc/:/usr/local/etc/
       - www_data:/opt/www/
       - bxtemp_data:/opt/.bx_temp/
       - msmtp_data:/opt/msmtp/
@@ -215,9 +202,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-      - .env_push
-      - .env_push_sub
-      - .env_redis
 #    ports:
 #      - "8010:8010"
     init: true
@@ -242,9 +226,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-      - .env_push
-      - .env_push_pub
-      - .env_redis
 #    ports:
 #      - "9010:9010"
     init: true
@@ -290,21 +271,16 @@ services:
           - sphinx
   cron:
     image: quay.io/bitrix24/php:8.2.29-fpm-v1-alpine
-    #image: quay.io/bitrix24/php:8.3.24-fpm-v1-alpine
-    #image: quay.io/bitrix24/php:8.4.11-fpm-v1-alpine
     container_name: dev_cron
     restart: unless-stopped
     command: crond -f -d 8
     user: root
     env_file:
       - .env
-      - .env_php
 #    ports:
 #      - "9001:9000"
     volumes:
       - ./confs/php82/etc/:/usr/local/etc/
-      #- ./confs/php83/etc/:/usr/local/etc/
-      #- ./confs/php84/etc/:/usr/local/etc/
       - www_data:/opt/www/
       - bxtemp_data:/opt/.bx_temp/
       - msmtp_data:/opt/msmtp/
@@ -335,7 +311,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-      - .env_ssl
     volumes:
       - ssl_data:/ssl/
     init: true
